@@ -90,7 +90,7 @@ from math import sqrt, hypot, atan2, radians, degrees, cos, sin, floor, isqrt
 from random import *
 import time
 import re
-from unittest import result
+
 
 sys.setrecursionlimit(10000)
 sys.set_int_max_str_digits(0)
@@ -195,7 +195,8 @@ def Combination(n: int, m: int, RP_mode=False):  # 组合数
     else:
         if n == 0 or n == m:
             result = 1
-        result = Factorial(n) / (Factorial(m) * Factorial(n - m))
+        else:
+            result = Factorial(n) / (Factorial(m) * Factorial(n - m))
         if not RP_mode:
             return result
         elif RP_mode:
@@ -231,7 +232,7 @@ def Public_Min(m: int, n: int, RP_mode=False):  # 最小公倍数
     返回一个数值，为 从m和n的最小公倍数
     支持输出模式控制，False / 0 返回值，True / 1输出文字
     """
-    if not (isinstance(m, int) and isinstance(n, int) and m > 0 and n > 0):
+    if not (isinstance(m, int) and isinstance(n, int) and m >= 0 and n >= 0):
         raise MathError("计算最小公倍数时m、n须均为正整数 ！")
     if m == 0 or n == 0:
         raise MathError("计算最小公倍数时m、n不能为零 ！")
@@ -535,7 +536,7 @@ def GDN(a, n, b):  #高德纳箭头
     if b == 1:
         return a
     if n == 0:
-        return 1
+        return a*b
     elif n == 1:
         return N1(a,b)
     elif n == 2:
@@ -558,46 +559,69 @@ class DataStat(list):
                 self.List = List
             else:
                 self.List = [List] + list(args)
+
+
         No_Num =[]
         i = len(self.List)-1
         while i >= 0:
             j = self.List[i]
-            if isinstance(j,str):
-                if j.isdigit():
-                    self.List[i] = int(j)
-                else:
-                    Class = re.compile(r'[+-]?(?:\d+\.?\d*|\.\d+)')
-                    if not Class.fullmatch(j):
-                        self.List.remove(j)
-                        No_Num .append(j)
-                    else:
-                        self.List[i] = float(j)
+            try:
+                self.List[i] = float(j)
+            except ValueError:
+                del self.List[i]
+                No_Num.append(j)
             i -= 1
 
         if len(No_Num) > 0:
             print(f"{No_Num}中的元素为非数字数据，已排除")
         if self.List == []:
-            raise MathError("请传入有效列表！")
+            raise MathError("请传入有效列表！空列表所有统计指标均无数学意义，无法进行计算")
+
+        self.Cateorize = self.Classify()
+
+
+    def Classify(self):    # 特殊列表判断
+        if self.List == []:
+            return 0              # 空列表：0
+        elif len(self.List) == 1:
+            return 1              # 单元素列表：1
+        else:
+            
+            for i in self.List:  # 遍历每个元素
+                if i != self.get()[0]:
+                    return 5  # 其他 正常列表
+            return 2 if self.get()[0] == 0 else (3 if self.get()[0] == 1 else 4)   # 全0列表：2、全1列表：3，其他数字全同：4
+
 
     def get(self):
         return self.List
-    def All_Zero(self):  # 全零判断
-        count = 0
-        for i in self.List:
-            if i != 0:
-                count += 1
-        if count == 0:
-            return True
-        else:
-            return False
-
+    
     def Arithmetic_mean(self):  # 算数平均值
-        result = sum(self.List) / len(self.List)
-        return round(result, 4)
+        if self.Cateorize==0:
+            return None
+        elif self.Cateorize==1:
+            return self.get()[0]
+        elif self.Cateorize==2:
+            return 0
+        elif self.Cateorize==3:
+            return 1
+        elif self.Cateorize==4:
+            return self.get()[0]
+        else:
+            result = sum(self.List) / len(self.List)
+            return round(result, 4)
 
     def Weighted_mean(self):  # 加权平均值
-        if self.All_Zero():
-            result = 0
+        if self.Cateorize==0:
+            return None
+        elif self.Cateorize==1:
+            return self.get()[0]
+        elif self.Cateorize==2:
+            return 0
+        elif self.Cateorize==3:
+            return 1
+        elif self.Cateorize==4:
+            return self.get()[0]
         else:
             r1 = []
             for i in self.List:
@@ -606,10 +630,21 @@ class DataStat(list):
         return round(result, 4)
 
     def MadCalculator(self):  # 平均绝对偏差
-        abs_deviations = []
-        for i in self.List:
-            abs_deviations.append(abs(i - self.Arithmetic_mean()))
-        return round(sum(abs_deviations) / len(abs_deviations), Precision)
+        if self.Cateorize==0:
+            return None
+        elif self.Cateorize==1:
+            return 0
+        elif self.Cateorize==2:
+            return 0
+        elif self.Cateorize==3:
+            return 0
+        elif self.Cateorize==4:
+            return 0
+        else:
+            abs_deviations = []
+            for i in self.List:
+                abs_deviations.append(abs(i - self.Arithmetic_mean()))
+            return round(sum(abs_deviations) / len(abs_deviations), Precision)
 
     def Distance_Mean(self):  # 平均差
         self.List = sorted(self.List)
@@ -628,69 +663,107 @@ class DataStat(list):
         return sum(r1)
 
     def Variance(self,ddot=0):  # 方差，ddot=0时为总体，ddot=1时为样本
-        if self.All_Zero():
-            return 0
-        else:
+        if self.Cateorize==5:
             result = self.__Var() / len(self.List) if ddot == 0 else self.__Var() / (len(self.List) - 1)
             return round(result, 4)
+        else:
+            return 0
 
     def Std_Dev(self,ddot=0):  # 标准差，ddot=0时为总体，ddot=1时为样本
-        if self.All_Zero():
-            return 0
-        else:
+        if self.Cateorize==5:
             return round(sqrt(self.Variance(ddot)), 4) if self.Variance(ddot) is not None else None
+        else:
+            return 0
 
     def Median(self):  # 中位数
-        if self.All_Zero():
-            return 0
-        else:
+        if self.Cateorize==5:
             r1 = len(self.List)
             self.List.sort()
             if r1 % 2 == 0:
                 return (self.List[int(r1 / 2)] + self.List[int(r1 / 2 - 1)]) / 2
             else:
                 return self.List[int(r1 // 2)]
+        elif self.Cateorize==0:
+            return None
+        elif self.Cateorize==1:
+            return self.get()[0]
+        elif self.Cateorize==2:
+            return 0
+        elif self.Cateorize==3:
+            return 1
+        else:
+            return self.get()[0]
 
     def List_Product(self):  # 累乘
-        result = 1
-        for num in self.List:
-            result *= num
-        return result
+        if self.Cateorize==5:
+            result = 1
+            for num in self.List:
+                result *= num
+            return result
+        elif self.Cateorize==0:
+            return 1
+        elif self.Cateorize==1:
+            return self.get()[0]
+        elif self.Cateorize==2:
+            return 0
+        elif self.Cateorize==3:
+            return 1
+        else:
+            return self.get()[0]**len(self.List)
 
     def Data_Range(self):  # 极差
-        return max(self.List) - min(self.List)
+        if self.Cateorize==0:
+            return None
+        elif self.Cateorize==5:
+            return max(self.List) - min(self.List)
+        else:
+            return 0
 
     def Mode(self):  # 众数
-        Dicts = dict()
-        for i in self.List:
-            Dicts[i] = self.List.count(i)
-        LK = list(Dicts.keys())
-        LV = list(Dicts.values())
-        result_List = []
-        Index = Find_All(LV, max(LV))
-        if len(Index) == len(set(self.List)):
-            return None
-        else:
-            for j in Index:
-                result_List.append(LK[j])
-            if len(result_List) == 1:
-                return result_List[0]
+        if self.Cateorize==5:
+            Dicts = dict()
+            for i in self.List:
+                Dicts[i] = self.List.count(i)
+            LK = list(Dicts.keys())
+            LV = list(Dicts.values())
+            result_List = []
+            Index = Find_All(LV, max(LV))
+            if len(Index) == len(set(self.List)):
+                return None
             else:
-                return result_List
+                for j in Index:
+                    result_List.append(LK[j])
+                if len(result_List) == 1:
+                    return result_List[0]
+                else:
+                    return result_List
+        elif self.Cateorize==4:
+            return self.get()[0]
+        elif self.Cateorize==3:
+            return 1
+        elif self.Cateorize==2:
+            return 0
+        elif self.Cateorize==1:
+            return self.get()[0]
+        else:
+            return None
 
     def Error_Num(self):  # 异常数，判断标准为偏离均值大于三个样本标准差
-        result_List = []
-        mean = self.Arithmetic_mean()
-        for i in self.List:
-            if abs(i - mean) >= 3 * self.Std_Dev(ddot=1):
-                result_List.append(i)
-        if len(result_List) == 1:
-            return result_List[0]
-        elif len(result_List) == 0:
-            print(f"列表 {self.List} 无异常值")
-            return None
+        if self.Cateorize==5:
+            result_List = []
+            mean = self.Arithmetic_mean()
+            for i in self.List:
+                if abs(i - mean) >= 3 * self.Std_Dev(ddot=1):
+                    result_List.append(i)
+            if len(result_List) == 1:
+                return result_List[0]
+            elif len(result_List) == 0:
+                print(f"列表 {self.List} 无异常值")
+                return None
+            else:
+                return result_List
         else:
-            return result_List
+            return None
 
     def No_Repetitive(self):  # 列表去重
         seen = set()
@@ -704,7 +777,12 @@ class DataStat(list):
         self.List = result_list
 
     def CV(self,ddot=0):  # 变异系数
-        return self.Std_Dev(ddot) / self.Arithmetic_mean()
+        if self.Cateorize==5:
+            return self.Std_Dev(ddot) / self.Arithmetic_mean()
+        elif self.Cateorize in (0,2):
+            return None
+        else:
+            return 0
 
 class Bool_Sum:
     @staticmethod
@@ -818,7 +896,6 @@ if __name__ == "__main__":
     L3 =DataStat(1,2,3,2)
     L3.No_Repetitive()
     print(L3.get())    
-    t1 = time.time
 if __name__ != "__main__":
     # 当作为模块导入时，导出所有公共函数
     __all__ = [
