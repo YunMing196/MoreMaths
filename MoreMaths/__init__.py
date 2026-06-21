@@ -53,6 +53,7 @@ List.get.remove(obj) 删除元素  等等操作
     GDN(a, n, b)                                高德纳箭头计算函数，不支持RP_mode=False
     DataStat(List)                     创建数据列表
         - get()                        外部接口访问
+        - No_Repetitive()              列表去重
         - All_Zero()                   全零判断
         - Arithmetic_mean()            算术平均数
         - Weighted_mean()              加权平均数
@@ -94,5 +95,6 @@ if __name__ != "__main__":
         'Find_All', 'Find_One', 'Factorization', 'Base_Decomp',
         'Perfect_Square', 'sqrt_reduce', 'self_power_num',
         'DataStat', 'Bool_Sum', 'MathError', 'Precision', 'A', 'C',
+        'Count_Power', 'GDN', 'Power',
         '__doc__'
     ]
