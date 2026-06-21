@@ -13,7 +13,7 @@ Python内置模块math没有的你或许可以在这里找到～
         值为 0 ，则将结果作为值返回，方便用于计算（默认）；
         值为 1 ，则将结果（带文字的，字符串）直接输出到控制台
         数据列表统计没有RP_mode参数
-        布尔运算RP_mode参数设置返回的是True/False还是1/0，值为False时返回布尔的，值为True时返回数字的
+        布尔运算RP_mode参数设置返回的是True/False还是1/0，值为False时返回数字的，值为True时返回布尔的
     ②最大递归深度10000，悠着点玩，报错我不管
 
 同时提供对外接口List.get()，通过这个你可以对数据列表使用内置列表的方法、函数，如：
@@ -90,6 +90,7 @@ from math import sqrt, hypot, atan2, radians, degrees, cos, sin, floor, isqrt
 from random import *
 import time
 import re
+from unittest import result
 
 sys.setrecursionlimit(10000)
 sys.set_int_max_str_digits(0)
@@ -111,7 +112,7 @@ def Factorial(num: int, RP_mode=False):  # 阶乘计算
         raise MathError("计算阶乘时输入的数字必须大于零且为整数")
     else:
         if (num == 0) or (num == 1):
-            return 1
+            result = 1
         else:
             result = 1
             for i in range(2, num + 1):
@@ -189,9 +190,11 @@ def Combination(n: int, m: int, RP_mode=False):  # 组合数
     返回一个数值，为 从n项中选取m项组合
     支持输出模式控制，False / 0 返回值，True / 1输出文字
     """
-    if not (isinstance(n, int) and isinstance(m, int) and 0 < m <= n):
+    if not (isinstance(n, int) and isinstance(m, int) and 0 <= m <= n):
         raise MathError("计算组合数时m、n须均为非负整数且m不大于n ！")
     else:
+        if n == 0 or n == m:
+            result = 1
         result = Factorial(n) / (Factorial(m) * Factorial(n - m))
         if not RP_mode:
             return result
@@ -210,9 +213,9 @@ def Public_Max(m: int, n: int, RP_mode=False):  # 最大公因数（辗转相除
         raise MathError("错误！计算最大公因数时m、n须均为正整数 ！")
     r = max(m, n) % min(m, n)
     if r == 0:
-        return min(m, n)
+        result = min(m, n)
     else:
-        result = Public_Max(n, r)
+        result = Public_Max(n, r, RP_mode=False)
     if not RP_mode:
         return result
     elif RP_mode:
@@ -265,7 +268,7 @@ def Pol(x, y, RP_mode=False):  # 平面直角坐标 转  极坐标
     返回两个数值，第一个为与原点O的距离r，第二个为r与x的夹角Alpha
     支持输出模式控制，False / 0 返回值，True / 1输出文字
     """
-    result = round(hypot(x, y)), round(degrees(atan2(y, x)), Precision)
+    result = round(hypot(x, y), Precision), round(degrees(atan2(y, x)), Precision)
     if not RP_mode:
         return result
     elif RP_mode:
@@ -614,7 +617,7 @@ class DataStat(list):
         for i in range(1, len(self.List)):
             result.append(abs(self.List[i] - self.List[i - 1]))
         try:
-            return round(len(result) / sum(result), Precision)
+            return round(sum(result) / len(result) , Precision)
         except ZeroDivisionError:
             return 0
 
@@ -675,10 +678,11 @@ class DataStat(list):
             else:
                 return result_List
 
-    def Error_Num(self):  # 异常数，判断标准为三个样本标准差
+    def Error_Num(self):  # 异常数，判断标准为偏离均值大于三个样本标准差
         result_List = []
+        mean = self.Arithmetic_mean()
         for i in self.List:
-            if i >= 3 * self.Std_Dev(ddot=1):
+            if abs(i - mean) >= 3 * self.Std_Dev(ddot=1):
                 result_List.append(i)
         if len(result_List) == 1:
             return result_List[0]
