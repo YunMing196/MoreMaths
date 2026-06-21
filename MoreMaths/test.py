@@ -48,8 +48,8 @@ print(f"算术平均值：{L2.Arithmetic_mean()}")
 print(f"加权平均值：{L2.Weighted_mean()}")
 print(f"平均绝对偏差：{L2.MadCalculator()}")
 print(f"平均距离：{L2.Distance_Mean()}")
-print(f"总体 / 样本方差： {L2.Population_Variance()} / {L2.Sample_Variance()}")
-print(f"总体 / 样本标准差： {L2.Population_Std_Dev()} / {L2.Sample_Std_Dev()}")
+print(f"总体 / 样本方差： {L2.Variance(ddot=0)} / {L2.Variance(ddot=1)}")
+print(f"总体 / 样本标准差： {L2.Std_Dev(ddot=0)} / {L2.Std_Dev(ddot=1)}")
 print(f"中位数：{L2.Median()}")
 print(f"众数：{L2.Mode()}")
 print(f"极差：{L2.Data_Range()}")
@@ -123,4 +123,56 @@ except MathError as E:
 
 
 
+print()
+print("======之前BUG回归测试======")
+print("--- 1. Distance_Mean 全等列表（之前除零崩溃）---")
+L_eq = DataStat(5,5,5,5)
+print(f"全等列表 [5,5,5,5] Distance_Mean = {L_eq.Distance_Mean()}")
+
+print("--- 2. DataStat 非法字符串输入（之前 ValueError 崩溃）---")
+try:
+    L_bad = DataStat("12..52","abc","12525")
+    print(f"输入('12..52','abc','12525') 后列表 = {L_bad.get()}")
+except Exception as e:
+    print(f"崩溃！{e}")
+
+print("--- 3. Count_Power 单参数（之前 UnboundLocalError）---")
+print(f"Count_Power(2, 1) = {Count_Power(2, 1)}")
+print(f"Count_Power(2, 0) = {Count_Power(2, 0)}")
+print(f"Count_Power(3, 2) = {Count_Power(3, 2)}")
+
+print("--- 4. Find_One 越界（之前 IndexError）---")
+L_find = [1,2,3,2,5]
+print(f"列表 {L_find} 找数字2第5次出现: {Find_One(L_find, 2, 5)}")
+print(f"列表 {L_find} 找数字2第0次出现: {Find_One(L_find, 2, 0)}")
+print(f"列表 {L_find} 找数字9第1次出现: {Find_One(L_find, 9, 1)}")
+
+print("--- 5. Half_Adder / Full_Adder RP_mode 一致性 ---")
+print(f"Half_Adder(1,0,RP_mode=False) = {Bool_Sum.Half_Adder(1,0,RP_mode=False)}")
+print(f"Half_Adder(1,0,RP_mode=True)  = {Bool_Sum.Half_Adder(1,0,RP_mode=True)}")
+print(f"Half_Adder(1,1,RP_mode=False) = {Bool_Sum.Half_Adder(1,1,RP_mode=False)}")
+print(f"Half_Adder(1,1,RP_mode=True)  = {Bool_Sum.Half_Adder(1,1,RP_mode=True)}")
+print(f"Full_Adder(1,0,0,RP_mode=False) = {Bool_Sum.Full_Adder(1,0,0,RP_mode=False)}")
+print(f"Full_Adder(1,0,0,RP_mode=True)  = {Bool_Sum.Full_Adder(1,0,0,RP_mode=True)}")
+print(f"Full_Adder(1,1,1,RP_mode=False) = {Bool_Sum.Full_Adder(1,1,1,RP_mode=False)}")
+print(f"Full_Adder(1,1,1,RP_mode=True)  = {Bool_Sum.Full_Adder(1,1,1,RP_mode=True)}")
+
+print("--- 6. Error_Num 多异常值 ---")
+L_mul = DataStat(10, 20, 100, 200, 500)
+print(f"列表 {L_mul.get()} Error_Num = {L_mul.Error_Num()}")
+L_none = DataStat(1,2,3)
+print(f"列表 {L_none.get()} Error_Num = {L_none.Error_Num()}")
+
+print("--- 7. sqrt_reduce num=0 （之前 NameError）---")
+print(f"sqrt_reduce(0) = {sqrt_reduce(0)}")
+
+print("--- 8. GDN 边界 ---")
+print(f"GDN(2, 1, 5) = {GDN(2, 1, 5)}")
+print(f"GDN(2, 2, 3) = {GDN(2, 2, 3)}")
+try:
+    GDN(2, 4, 2)
+except MathError as E:
+    print(f"GDN(2,4,2) 捕获异常: {E}")
+
+print()
 print("__doc__查看文档\ndir()查看可使用操作")
