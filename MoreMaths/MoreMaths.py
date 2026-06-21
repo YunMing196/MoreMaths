@@ -92,7 +92,7 @@ import time
 import re
 
 sys.setrecursionlimit(10000)
-# sys.set_int_max_str_digits(0)
+sys.set_int_max_str_digits(0)
 Precision = 15  # 整体控制精度
 
 
@@ -116,9 +116,9 @@ def Factorial(num: int, RP_mode=False):  # 阶乘计算
             result = 1
             for i in range(2, num + 1):
                 result *= i
-        if RP_mode == False:
+        if not RP_mode:
             return result
-        elif RP_mode == True:
+        elif RP_mode:
             print(f"{num}的阶乘计算结果为：{result}")
         else:
             raise MathError("无效的输出模式")
@@ -137,9 +137,9 @@ def Fibonacci_recursive_One(n: int, RP_mode=False):  # 斐波那契-第n项
         for i in range(2, n + 1):
             a, b = b, a + b
         result = b
-    if RP_mode == False:
+    if not RP_mode:
         return result
-    elif RP_mode == True:
+    elif RP_mode:
         print(f"斐波那契数列第{n}项为：{result}")
     else:
         raise MathError("无效的输出模式")
@@ -155,9 +155,9 @@ def Fibonacci_recursive_All(n: int, RP_mode=False):  # 斐波那契-前n项
     for i in range(0, n):
         List[i] = Fibonacci_recursive_One(i + 1)
     result = List
-    if RP_mode == False:
+    if not RP_mode:
         return result
-    elif RP_mode == True:
+    elif RP_mode:
         print(f"斐波那契数列前{n}项为：{result}")
     else:
         raise MathError("无效的输出模式")
@@ -174,9 +174,9 @@ def Arrangement(n: int, m: int, RP_mode=False):  # 排列数
         raise MathError("计算排列数时m、n须均为正整数且m不大于n ！")
     else:
         result = Factorial(n) / Factorial(n - m)
-        if RP_mode == False:
+        if not RP_mode:
             return result
-        elif RP_mode == True:
+        elif RP_mode:
             print(f"({m}, {n}) 的排列数计算结果为：{result}")
         else:
             raise MathError("无效的输出模式")
@@ -193,9 +193,9 @@ def Combination(n: int, m: int, RP_mode=False):  # 组合数
         raise MathError("计算组合数时m、n须均为非负整数且m不大于n ！")
     else:
         result = Factorial(n) / (Factorial(m) * Factorial(n - m))
-        if RP_mode == False:
+        if not RP_mode:
             return result
-        elif RP_mode == True:
+        elif RP_mode:
             print(f"({m}, {n}) 的组合数计算结果为：{result}")
         else:
             raise MathError("无效的输出模式")
@@ -213,9 +213,9 @@ def Public_Max(m: int, n: int, RP_mode=False):  # 最大公因数（辗转相除
         return min(m, n)
     else:
         result = Public_Max(n, r)
-    if RP_mode == False:
+    if not RP_mode:
         return result
-    elif RP_mode == True:
+    elif RP_mode:
         print(f"{m}, {n}的最大公因数为：{result}")
     else:
         raise MathError("无效的输出模式")
@@ -233,9 +233,9 @@ def Public_Min(m: int, n: int, RP_mode=False):  # 最小公倍数
     if m == 0 or n == 0:
         raise MathError("计算最小公倍数时m、n不能为零 ！")
     result = int((m * n) / Public_Max(m, n))
-    if RP_mode == False:
+    if not RP_mode:
         return result
-    elif RP_mode == True:
+    elif RP_mode:
         print(f"{m}, {n}的最小公倍数为： {result}")
     else:
         raise MathError("无效的输出模式")
@@ -266,9 +266,9 @@ def Pol(x, y, RP_mode=False):  # 平面直角坐标 转  极坐标
     支持输出模式控制，False / 0 返回值，True / 1输出文字
     """
     result = round(hypot(x, y)), round(degrees(atan2(y, x)), Precision)
-    if RP_mode == False:
+    if not RP_mode:
         return result
-    elif RP_mode == True:
+    elif RP_mode:
         print(f"平面直角坐标 {x, y} 转极坐标结果为： {result}")
     else:
         raise MathError("无效的输出模式")
@@ -282,9 +282,9 @@ def Rec(r, Alpha, RP_mode=False):  # 极坐标转平面直角坐标
     """
     AlphaR = radians(Alpha)  # 角度制转弧度制
     result = round(r * cos(AlphaR), Precision), round(r * sin(AlphaR), Precision)
-    if RP_mode == False:
+    if not RP_mode:
         return result
-    elif RP_mode == True:
+    elif RP_mode:
         print(f"极坐标 {r, Alpha} 转换为直角坐标结果为：{result}")
     else:
         raise MathError("无效的输出模式")
@@ -306,9 +306,9 @@ def QinJiuShao(a, b, c, RP_mode=False):  # 秦久韶公式
         b2 = pow(b, 2)
         c2 = pow(c, 2)
         result = round(sqrt((a2 * b2 - (pow((a2 + b2 - c2) / 2, 2))) / 4), Precision)
-        if RP_mode == False:
+        if not RP_mode:
             return result
-        elif RP_mode == True:
+        elif RP_mode:
             print(f"边长为{a}, {b}, {c} 的三角形面积为：{result}\t<秦久韶公式>")
         else:
             raise MathError("无效的输出模式")
@@ -328,9 +328,9 @@ def HaiLun(a, b, c, RP_mode=False):  # 海伦公式
     else:
         p = (a + b + c) / 2
         S = round(sqrt(p * (p - a) * (p - b) * (p - c)), Precision)
-        if RP_mode == False:
+        if not RP_mode:
             return S
-        elif RP_mode == True:
+        elif RP_mode:
             print(f"边长为{a}, {b}, {c} 的三角形面积为：{S}\t<海伦公式>")
         else:
             raise MathError("无效的输出模式")
@@ -347,9 +347,9 @@ def Find_All(List: list, Value: int, RP_mode=False):
         if j == Value:
             Index.append(i)
     result = Index
-    if RP_mode == False:
+    if not RP_mode:
         return result
-    elif RP_mode == True:
+    elif RP_mode:
         print(f"元素在列表中出现的索引位置：{result}" if not len(result) == 0 else f"列表中没有这个元素")
     else:
         raise MathError("无效的输出模式")
@@ -362,13 +362,13 @@ def Find_One(List: list, Value: int, count: int, RP_mode=False):
     支持输出模式控制，False / 0 返回值，True / 1输出文字
     """
     Index = Find_All(List, Value)
-    if len(Index) == 0:
+    if len(Index) == 0 or count < 0 or count >= len(Index):
         result = None
     else:
         result = Index[count]
-    if RP_mode == False:
+    if not RP_mode:
         return result
-    elif RP_mode == True:
+    elif RP_mode:
         print(f"元素在列表中第{count}次出现的索引位置：{result}" if not result == None else f"列表中没有这个元素")
     else:
         raise MathError("无效的输出模式")
@@ -393,9 +393,9 @@ def Factorization(num: int, RP_mode=False):  # 分解质因数
             else:
                 i += 1
 
-        if RP_mode == False:
+        if not RP_mode:
             return result
-        elif RP_mode == True:
+        elif RP_mode:
             print(f"{num}的质因数分解结果为：{result}")
         else:
             raise MathError("无效的输出模式")
@@ -417,9 +417,9 @@ def Base_Decomp(num, a, RP_mode=False):  # 底数分解
     r4 = r2 * Cheng
     Jia = num - r4
     result = Mi, Cheng, Jia
-    if RP_mode == False:
+    if not RP_mode:
         return result
-    elif RP_mode == True:
+    elif RP_mode:
         print(f"{a} ^ {result[0]} * {result[1]} + {result[2]} == {num}")
     else:
         raise MathError("无效的输出模式")
@@ -452,9 +452,9 @@ def sqrt_reduce(num: int, RP_mode=False):  # 二次根式分解
                     break
             a = num // i ** 2
             result = (i, a)
-        if RP_mode == False:
+        if not RP_mode:
             return result
-        elif RP_mode == True:
+        elif RP_mode:
             print(f"√{num} = {result[0]}√{result[1]}" if result[1] != 1 else f"√{num} = {result[0]}")
         else:
             raise MathError("无效的输出模式")
@@ -474,23 +474,31 @@ def self_power_num(num: int):  # 自幂数判断
 
 def Power(m, n, RP_mode=False):   #幂运算
     result = m ** n
-    if RP_mode == False:
+    if not RP_mode:
         return result
-    elif RP_mode == True:
+    elif RP_mode:
         print(f"{m} ^ {n} = {result}")
     else:
         raise MathError("无效的输出模式")
 
 def Count_Power(a, b, RP_mode=False):   #重幂
-    count = [a] * b
-    for i in range(len(count)-2, -1, -1):
-        if i == len(count)-2:
-            result = Power(count[i],count[i+1])
+    if b == 1 :
+        result = a
+    elif b == 0 :
+        if a == 0:
+            raise MathError("规定，b=0时，a不得为零！")
         else:
-            result = Power(count[i], result)
-    if RP_mode == False:
+            result = 1
+    else:
+        count = [a] * b
+        for i in range(len(count)-2, -1, -1):
+            if i == len(count)-2:
+                result = Power(count[i],count[i+1])
+            else:
+                result = Power(count[i], result)
+    if not RP_mode:
         return result
-    elif RP_mode == True:
+    elif RP_mode:
         print(f"{a} 的 {b}  重幂 = {result}")
     else:
         raise MathError("无效的输出模式")
@@ -549,14 +557,14 @@ class DataStat(list):
                 self.List = [List] + list(args)
         No_Num =[]
         i = len(self.List)-1
-        while i > 0:
+        while i >= 0:
             j = self.List[i]
             if isinstance(j,str):
                 if j.isdigit():
                     self.List[i] = int(j)
                 else:
-                    Class =re.match('[0-9]+\.[0-9]+', j)
-                    if not Class:
+                    Class = re.compile(r'[+-]?(?:\d+\.?\d*|\.\d+)')
+                    if not Class.fullmatch(j):
                         self.List.remove(j)
                         No_Num .append(j)
                     else:
@@ -604,8 +612,11 @@ class DataStat(list):
         self.List = sorted(self.List)
         result = []
         for i in range(1, len(self.List)):
-            result.append(self.List[i] - self.List[i - 1])
-        return round(len(result) / sum(result), Precision)
+            result.append(abs(self.List[i] - self.List[i - 1]))
+        try:
+            return round(len(result) / sum(result), Precision)
+        except ZeroDivisionError:
+            return 0
 
     def __Var(self):
         r1 = []
@@ -671,6 +682,11 @@ class DataStat(list):
                 result_List.append(i)
         if len(result_List) == 1:
             return result_List[0]
+        elif len(result_List) == 0:
+            print(f"列表 {self.List} 无异常值")
+            return None
+        else:
+            return result_List
 
     def No_Repetitive(self):  # 列表去重
         seen = set()
@@ -749,16 +765,16 @@ class Bool_Sum:
     def Half_Adder(A, B, RP_mode=False):  # 半加运算
         A = bool(A)
         B = bool(B)
-        S = Bool_Sum.XOR(A, B)
+        S = Bool_Sum.XOR(A, B,RP_mode=True)
         C = A and B
-        return (C, S) if RP_mode == False else tuple(map(int, (C, S)))
+        return (C, S) if RP_mode else tuple(map(int, (C, S)))
 
     @staticmethod
     def Full_Adder(A, B, C_in, RP_mode=False):  # 全加运算
         A = bool(A)
         B = bool(B)
         C_in = bool(C_in)
-        S = Bool_Sum.XOR(Bool_Sum.XOR(A, B), C_in)
+        S = Bool_Sum.XOR(Bool_Sum.XOR(A, B,RP_mode=True), C_in, RP_mode=True)
         C_out = (A and B) or (B and C_in) or (A and C_in)
         return (C_out, S) if RP_mode else tuple(map(int, (C_out, S)))
 
@@ -797,12 +813,8 @@ if __name__ == "__main__":
     print(L2.get())
     L3 =DataStat(1,2,3,2)
     L3.No_Repetitive()
-    print(L3.get())
-    print(L4)
-    t1 = time.time()
-    Factorial(1500,1)
-    t2 = time.time()
-    print(t2 - t1)
+    print(L3.get())    
+    t1 = time.time
 if __name__ != "__main__":
     # 当作为模块导入时，导出所有公共函数
     __all__ = [
